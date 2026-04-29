@@ -1,0 +1,57 @@
+substitutions:
+  _IMAGE_NAME: "ai-backend:${SHORT_SHA}"
+  _IMAGE_NAME_LATEST: "ai-backend:latest"
+  _SERVICE_NAME: "ai-backend"
+
+  # These values are passed in via Cloud Build variables to support different environments
+  # Uncomment to hardcode or to use in one environment without passing vars in.
+  _REGION: australia-southeast1
+  _CLOUDRUN_CPU: 1
+  _CLOUDRUN_MEMORY: 512Mi
+
+steps:
+  - id: Pull in the backend image (for cached builds in the next step)
+    name: "gcr.io/cloud-builders/docker"
+    entrypoint: "bash"
+    args:
+      - "-c"
+      - |
+        docker pull ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_SERVICE_NAME}/${_IMAGE_NAME_LATEST} || exit 0
+
+  - id: Build backend docker image
+    name: "gcr.io/cloud-builders/docker"
+    entrypoint: "bash"
+    args:
+      - "-c"
+      - |
+        docker build \
+        --cache-from ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_SERVICE_NAME}/${_IMAGE_NAME_LATEST} \
+        -t ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_SERVICE_NAME}/${_IMAGE_NAME_LATEST} \
+        -t ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_SERVICE_NAME}/${_IMAGE_NAME} \
+        .
+
+  - id: Push backend docker image tags
+    name: "gcr.io/cloud-builders/docker"
+    entrypoint: "bash"
+    args:
+      - "-c"
+      - |
+        docker push ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_SERVICE_NAME}/${_IMAGE_NAME_LATEST} && \
+        docker push ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_SERVICE_NAME}/${_IMAGE_NAME}
+
+  - id: Deploy to Cloud Run
+    name: gcr.io/cloud-builders/gcloud
+    entrypoint: "bash"
+    args:
+      - "-c"
+      - |
+        gcloud run deploy ${_SERVICE_NAME} \
+        --image ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_SERVICE_NAME}/${_IMAGE_NAME} \
+        --region ${_REGION} \
+        --platform managed \
+        --memory ${_CLOUDRUN_MEMORY} \
+        --cpu ${_CLOUDRUN_CPU} \
+        --service-account=${_SERVICE_NAME}@$PROJECT_ID.iam.gserviceaccount.com
+
+options:
+  logging: CLOUD_LOGGING_ONLY

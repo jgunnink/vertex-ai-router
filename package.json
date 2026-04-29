@@ -1,0 +1,30 @@
+{
+  "name": "vertex-ai-router",
+  "module": "src/index.ts",
+  "type": "module",
+  "scripts": {
+    "checks": "bun test && bun run lint && bun run typecheck && bun run prettier:check",
+    "dev": "bun run --hot src/index.ts",
+    "start": "bun run src/index.ts",
+    "test": "bun test",
+    "lint": "eslint 'src/**/*.{ts,tsx}'",
+    "lint:fix": "eslint 'src/**/*.{ts,tsx}' --fix",
+    "typecheck": "bunx tsc --noEmit",
+    "prettier:write": "bunx prettier@latest --write \"**/*.{js,ts,json}\"",
+    "prettier:check": "bunx prettier@latest --check \"**/*.{js,ts,json}\""
+  },
+  "dependencies": {
+    "@google/genai": "^1.49.0",
+    "hono": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@eslint/js": "^9.0.0",
+    "typescript-eslint": "^8.0.0",
+    "eslint": "^9.0.0",
+    "typescript": "^5.0.0"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
