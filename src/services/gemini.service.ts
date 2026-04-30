@@ -15,10 +15,11 @@ if (hasApiKey) {
   LOCATION = undefined;
 }
 
+const isTest = process.env.NODE_ENV === "test";
 const ai = new GoogleGenAI({
   vertexai: useVertex,
   apiKey: hasApiKey ? process.env.GEMINI_API_KEY : undefined,
-  project: PROJECT,
+  project: PROJECT || (isTest && !hasApiKey ? "test-project" : undefined),
   location: LOCATION
 });
 

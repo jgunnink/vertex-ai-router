@@ -10,7 +10,7 @@ A lightweight, high-performance API for routing between Gemini models, written i
 
 ## Prerequisites
 
-- [Bun](https://bun.sh/) (v1.0.0 or later)
+- [Bun](https://bun.sh/) (v1.2.5 or later)
 - Node.js v24
 
 ## Getting Started
