@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@google/genai": "^2.7.0",
-    "hono": "^4.12.23"
+    "hono": "^4.12.18"
   },
   "devDependencies": {
     "@types/bun": "latest",
