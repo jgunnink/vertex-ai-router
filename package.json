@@ -14,7 +14,7 @@
     "prettier:check": "bunx prettier@latest --check \"**/*.{js,ts,json}\""
   },
   "dependencies": {
-    "@google/genai": "^2.13.0",
+    "@google/genai": "^2.19.0",
     "hono": "^4.12.32"
   },
   "devDependencies": {
